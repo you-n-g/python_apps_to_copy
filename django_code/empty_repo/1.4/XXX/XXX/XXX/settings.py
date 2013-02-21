@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #-*- coding:utf8 -*-
 # Django settings for XXX project.
 
@@ -137,6 +138,8 @@ INSTALLED_APPS = (
 
     # 定制化的app
 )
+
+# LOGIN_REDIRECT_URL='/'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
