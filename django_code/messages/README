@@ -1,0 +1,2 @@
+{% include "widget_templates/messages.html" %}
+然后拷贝 css/* ，  images/* 就能有比较好看的样式

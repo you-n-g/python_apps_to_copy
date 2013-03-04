@@ -1,0 +1,5 @@
+<ul class="message">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}<span style="border:none; padding-left: 150px;cursor: pointer;" onclick="$(this).parent().fadeOut()">隐藏</span></li>
+    {% endfor %}
+</ul>

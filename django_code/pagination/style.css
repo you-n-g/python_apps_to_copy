@@ -1,0 +1,25 @@
+/* BEGIN 分页的样式 */
+.pagination {
+  padding: 10px 0;
+}
+.pagination a,
+.pagination span{
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  padding: 3px 6px;
+  margin: 0 5px;
+}
+.pagination a:hover,
+.pagination a:active{
+  background: #f3f3f3;
+}
+.pagination .dot{
+  border:0;
+  margin: 0;
+}
+.pagination .current{
+  background:#f66;
+  border-color: #f66;
+  color: #fff;
+}
+/* END 分页的样式 */

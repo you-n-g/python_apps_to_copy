@@ -1,0 +1,2 @@
+pip install django-pagination
+安装pagination之后，  拷贝 style.css 的样式就会有 稍微能看的效果
