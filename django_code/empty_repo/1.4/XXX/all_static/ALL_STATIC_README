@@ -1,0 +1,2 @@
+本文件放置的是最终的static文件
+./manage.py collectstatic --link
