@@ -1,0 +1,18 @@
+{% load flowplayer%}
+{%if value_type == "ImageField"%}
+	<a href="{{ python_value.get_display_url }}"class="highslide" onclick="return hs.expand(this)">
+                    <img src="{{ python_value.get_100_100_url }}" alt="" title="Click to enlarge" />
+    </a>
+	
+{%endif%}
+
+{%if value_type == "VideoField"%}
+	{% flowplayer python_value.url %}
+{%endif%}
+
+{%if value_type == "FileField"%}
+	<a href="{{python_value.url}}" title="下载">下载</a>
+{%endif%}
+{%if value_type == "TextField"%}
+	{{ python_value|linebreaks}}
+{%endif%}

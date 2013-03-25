@@ -1,0 +1,49 @@
+{{form.media}}
+<fieldset>
+{%if form.instruction%}
+<br />
+<div class="form_instruction mlrA pdC mbB">
+    <h1> 提示 </h1>
+    {%if form.instruction%}<p> {{form.instruction}} </p>{%endif%}
+    <p>加<span style="color:red;">*</span>为必填</p>
+</div>
+{%endif%}
+{%if form.non_field_errors%}<div class="mtA">{{ form.non_field_errors }}</div>{%endif%}
+{%for field in form%}
+	<div class="control-group {%if field.errors%}error{%endif%}">
+	  <label class="control-label" for="input01">{{field.label}}{%if field.field.required%}<span style="color:red;">*</span>{%endif%}</label>
+	  <div class="controls">
+	  	{{field}}
+	    <span class="help-inline">{%if field.errors%}{{field.errors.0}}{%else%}{{field.help_text}}{%endif%}</span>
+	  </div>
+	</div>
+{%endfor%}
+<input type="hidden" name="valid_redirect_url" value="{{valid_redirect_url}}">
+</fieldset>
+
+<div class="form-actions" style="background:white; border-top:1px dotted #7D9958">
+    <button type="submit" class="btnBg01">保存</button> 
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		$("form.need_validate").validate({
+					meta:"validate",
+					errorPlacement: function(error, element) {
+						element.next().html(error);
+					}
+		});
+        $('.eform_form textarea').css("width","370px");
+        $('.eform_form select').css("width","370px");
+        $('.eform_form input').css("width","360px");
+        $('.datetimewidget input').css('width','180px');
+        $('.eform_form select').css("font-size","13px");
+        $(".form-actions button").parents('form').submit(function(){
+            if ($(this).valid()) {
+                var but = $(this).find('button');
+                but.attr('disabled', 'disabled');
+                but.html('提交中...');
+            }
+        });
+	})
+</script>

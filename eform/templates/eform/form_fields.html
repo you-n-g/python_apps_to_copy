@@ -1,0 +1,23 @@
+{{form.media}}
+<fieldset>
+    {%if form_name or form.name%}<legend class="survey_title">{% if form_name %}{{form_name}}{% else %}{{form.eform_name}}{% endif %}</legend>{%endif%}
+{%if form.instruction%}
+<br />
+<div class="form_instruction mlrA pdC mbB">
+    <h1> 提示 </h1>
+    {%if form.instruction%}<p> {{form.instruction}} </p>{%endif%}
+    <p>加<span style="color:red;">*</span>为必填</p>
+</div>
+{%endif%}
+{%if form.non_field_errors%}<div class="mtA">{{ form.non_field_errors }}</div>{%endif%}
+{%for field in form%}
+	<div class="control-group {%if field.errors%}error{%endif%}">
+	  <label class="control-label" for="input01">{{field.label}}{%if field.field.required%}<span style="color:red;">*</span>{%endif%}</label>
+	  <div class="controls">
+	  	{{field}}
+	    <span class="help-inline">{%if field.errors%}{{field.errors.0}}{%else%}{{field.help_text}}{%endif%}</span>
+	  </div>
+	</div>
+{%endfor%}
+<input type="hidden" name="valid_redirect_url" value="{{valid_redirect_url}}">
+</fieldset>

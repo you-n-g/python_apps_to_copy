@@ -1,0 +1,64 @@
+{% load eform_tags %}
+
+{% comment %} 如果需要的话，就吧图像显示添加进来
+{%include "common_part/image_display_header.html"%}
+{% endcomment %}
+
+{% with normal_eforms=display_info.0 special_eforms=display_info.1 %}
+{% for eform, fgr in  normal_eforms %}
+
+    {% if eform.repeat_n > 1 and fgr|length > 0%}
+        <dl class="group_head mtA  mbC">
+            <span>{{eform}}</span>
+        </dl>
+    {% endif %}
+
+    {% for group in fgr %}
+        {% for field, values in group %}
+            <dl class="pdC xxjs need_background">
+                        <dt>{{field.label}}</dt>
+                        <dd>
+                           {% for value in values %}
+                            {%value_display_in_template value "eform/value_display.html"%}
+                           {% endfor %}
+                        </dd>
+            </dl>
+        {%endfor%}
+    {%endfor%}
+{% endfor %}
+
+{%if special_eforms.image.0.1 %}
+<dl class="group_head mtA mbC">
+    <span>{{special_eforms.image.0.0}}</span>
+</dl>
+{%endif%}
+
+{%if special_eforms.image %}
+<div class="image_pos">
+    <div class="leftbotton" id="sildeLeft"></div>
+    <div class="rightbotton" id="sildeRight"></div>
+    <div class="zptup" id="slideUl">
+        <ul style="margin-left: 0px; ">
+        {% for eform, fgr in  special_eforms.image %}
+            {% for group in fgr %}
+                {% for field, values in group %}
+                    {%for value in values %}                                              
+                    <li>
+                        <a href="{{value.content_object.get_display_url}}"class="highslide" onclick="return hs.expand(this)">
+                            <img src="{{value.content_object.get_120_80_url}}" alt="">
+                        </a>
+                    </li>
+                    {%endfor%}
+                {%endfor%}
+            {%endfor%}
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+{%endif%}
+{% endwith %}
+<script type="text/javascript" >
+$(function(){
+ $(".need_background:odd").css("background","#FAFBFC");
+})
+</script>

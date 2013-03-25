@@ -1,0 +1,21 @@
+{% include "eform/form_fields.html" %}
+
+<script type="text/javascript">
+	$(function(){
+		$("form.need_validate").validate({
+					meta:"validate",
+					errorPlacement: function(error, element) {
+						element.parents('.controls').find(".help-inline").html(error);
+					}
+		});
+        $(".form-actions button").parents('form').submit(function(){
+            if ($(this).valid()) {
+                var but = $(this).find('button');
+                but.attr('disabled', 'disabled');
+                but.html('提交中...');
+            }
+        });
+        $("input.date").removeClass("date");
+        $('.eform_form input[type="checkbox"]').css("width","14px");
+	})
+</script>

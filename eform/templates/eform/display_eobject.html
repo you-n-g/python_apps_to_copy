@@ -1,0 +1,67 @@
+{% load eform_tags %}
+{% comment %}
+{%include "common_part/image_display_header.html"%}
+{% endcomment %}
+{% with normal_eforms=display_info.0 special_eforms=display_info.1 %}
+
+{% for eform, fgr in normal_eforms %}
+<div class="pdC itsthetable">
+<table>
+    <caption>{{eform.name}}</caption>
+        {% for group in fgr %}
+        <tbody>
+            {% for field, values in group %}
+            <tr class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
+                <th class="col-1-6">{{field.label}}</th>
+                <td class="col-2-3">
+                   {% for value in values %}
+                    {%value_display_in_template value "eform/value_display.html"%}
+                   {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% empty %}
+        <tbody>
+        <tr>
+            <th class="col-1-6"></th>
+            <td class="col-2-3">没有{{eform.name}}</td>
+        </tr>
+        </tbody>
+        {% endfor %}
+</table>
+</div>
+{% endfor %}
+
+{% if special_eforms.image %}
+    {% for eform, fgr in special_eforms.image %}
+    <div class="pdC itsthetable">
+    <table>
+        <caption>{{eform.name}}</caption>
+            {% for group in fgr %}
+            <tbody>
+                {% for field, values in group %}
+                <tr class="{% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}">
+                    <th class="col-1-6">{{field.label}}</th>
+                    <td class="col-2-3">
+                       {% for value in values %}
+                        {%value_display_in_template value "eform/value_display.html"%}
+                       {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% empty %}
+            <tbody>
+            <tr>
+                <th class="col-1-6"></th>
+                <td class="col-2-3">没有{{eform.name}}</td>
+            </tr>
+            </tbody>
+            {% endfor %}
+    </table>
+    </div>
+    {% endfor %}
+{% endif %}
+
+{% endwith %}

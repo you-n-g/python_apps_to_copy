@@ -1,0 +1,18 @@
+.apple_overlay {
+    display:none;
+    background-image:url(../images/white.png);
+    width:640px;
+    padding:35px;
+    font-size:11px;
+    _background-image:url(../images/overlay_IE6.gif);
+    _color:#fff;
+}
+.apple_overlay .close {
+    background-image:url(../images/close.png);
+    _background-image:url(../images/overlay_close_IE6.gif);
+    position:absolute; right:5px; top:5px;
+    cursor:pointer;
+    height:35px;
+    width:35px;
+}
+
