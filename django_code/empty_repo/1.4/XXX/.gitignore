@@ -5,3 +5,4 @@ XXX/XXX/local_settings.py
 XXX/media/
 all_static/*
 config/*
+db/*

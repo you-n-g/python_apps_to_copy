@@ -2,11 +2,15 @@
 
 
 #BEGIN 用下面的脚本来命名新的repo
-NEW_NAME=NEWNAME
+NEWNAME=NEWNAME
 mv XXX $NEWNAME
-mv $NEWNAME/XXX/ $NEWNAME
-find $NEW_NAME -exec sed -i s/XXX/$NEW_NAME/g  {} \;
+mv $NEWNAME/XXX/ $NEWNAME/$NEWNAME
+find $NEWNAME -type f -exec sed -i s/XXX/$NEWNAME/g  {} \;
 #TODO 然后删除 .gitignore .hgignore 之一
+# git add -f .
+# find . -name '*.pyc' -exec git rm --cache {} \;
+# commit...
+# git push orign master 
 #END   用下面的脚本来命名新的repo
 
 

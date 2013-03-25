@@ -60,4 +60,5 @@ CKEDITOR.plugins.add( 'upload_files',
 #BEGIN CKEDITOR
 from ckeditor.widgets import CKEditorWidget
 self.fields["XXX"].widget = CKEditorWidget()
+#前台记得加 {{form.media}}
 #END   CKEDITOR

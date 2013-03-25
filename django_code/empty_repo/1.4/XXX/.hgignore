@@ -5,3 +5,4 @@
 ^XXX/media/
 ^all_static/
 ^config/
+^db/
