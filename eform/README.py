@@ -44,7 +44,7 @@ def XXX(request):
 """
 
 
-# -----------------进阶使用 使用方法 ， 针对只有多页内容的eformset------------------
+# -----------------进阶使用 使用方法 ， 针对有多页内容的eformset------------------
 # BEGIN urls.py
 #EDIT
 url(r'^XXX/(?P<XXX_id>\d+)/$', 'process_XXX', name='process_XXX'),
@@ -61,22 +61,24 @@ class XXX(models.Model):
         '''
             获取编辑 eform 的url
         '''
-        return reverse('process_XXX_eform', kwargs = {'XXX_id': self.id, 'eform_id': eform.id})
+        return reverse('process_XXX_eform', kwargs={'XXX_id': self.id, 'eform_id': eform.id})
 
     def get_owner_view_url(self, request):
         '''
             获取 编辑者 自己查看的页面
         '''
-        return reverse('view_XXX', kwargs = {'XXX_id': self.id})
+        return reverse('view_XXX', kwargs={'XXX_id': self.id})
 # END   models.py
 
 
 # BEGIN views.py
 from tools.utils import lock_view_when_post
 from eform.utils import fill_eform_view
+
+
 @lock_view_when_post
 def process_XXX(request, XXX_id, **kwargs):
-    xxx = get_object_or_404(XXX, pk = XXX_id)
+    xxx = get_object_or_404(XXX, pk=XXX_id)
     # TODO permission examine
     eobject = xxx.xxx_eobject
     eformset = eobject.default_fill_eformset
@@ -85,17 +87,17 @@ def process_XXX(request, XXX_id, **kwargs):
 
     return fill_eform_view(
         request,
-        obj = xxx,
-        eobj = eobject,
-        eformset = eformset,
-        template = "XXX.html",
-        eform_id = eform_id,
-        group = group,
-        context_dict = {'xxx': xxx},
-        initial_values = Values.XXX.filter()
+        obj=xxx,
+        eobj=eobject,
+        eformset=eformset,
+        template="XXX.html",
+        eform_id=eform_id,
+        group=group,
+        context_dict={'xxx': xxx},
+        initial_values=Values.XXX.filter()
     )
 
-def view_flowitem(request, XXX_id):
+def view_XXX(request, XXX_id):
     xxx = get_object_or_404(XXX, pk = XXX_id)
     # TODO permission examine
     eobject = xxx.xxx_eobject
@@ -105,6 +107,7 @@ def view_flowitem(request, XXX_id):
 # END   views.py
 
 """ html
+{% load eform_tags %}
 
     <script src="{{STATIC_URL}}plugins/jquery.validate.min.js" type="text/javascript"></script>
     <script src="{{STATIC_URL}}plugins/jquery.metadata.js" type="text/javascript"></script>
@@ -198,6 +201,49 @@ def view_flowitem(request, XXX_id):
             });
         </script>
     {%endif%}
+
+如果希望加入sidebar，  需要加上如下templatetag
+
+    {% eform_sidebar eobj eformset eform "XXX/process_XXXX_sidebar.html" %}
+
+然后 "XXX/process_XXXX_sidebar.html"  内容如下
+
+<ul class="steptab">
+    {% for eform,is_completed,is_current,has_link in  eform_sidebar %}
+    <li class="{% if is_current %}on{% endif %} {% if forloop.last %}final{% endif %}">
+            {%if not forloop.first%}<em class="left"></em>{%endif%}
+            <span><a class="item" {% if has_link %}href="{% url process_XXX eform_id=eform.id %}"{% endif %} title="">
+            {{eform}}({{forloop.counter}}/{{eform_sidebar|length}})
+            {% if is_completed %}
+                <b style="color:green">(已完成)</b> 
+            {% else %}
+                <b style="color:#F77">(未完成)</b>
+            {% endif %}
+            &nbsp;
+            </a></span>
+            {%if not forloop.last%}<em></em>{%endif%}
+        </li>
+    {% endfor %}
+</ul>
+<script type="text/javascript">
+    $(function(){
+            $(".steptab .on").next().addClass("second");
+    });
+</script>
+
+样式如下
+
+.steptab{ /* border:1px solid #ccc; float:left; */ font-size:12px; line-height:1.0;font-size: 14px;}
+.steptab li{ background:#f5f5f5; float:left; width:180px; height:30px; overflow:hidden; margin-right:15px;margin-bottom: 0px;}
+.steptab li.final{margin-bottom: 0px;margin-right:0px;}
+.steptab li span{ position:absolute; padding:6px 20px 0 20px;}
+.steptab li em{ margin-left:180px; background:#FF6633;position:absolute; border:15px solid #f5f5f5; border-left:#f5f5f5; height:0px; overflow:hidden;}
+.steptab li .left{ margin-left:0; border:15px solid #f5f5f5; border-left:15px solid #ccc;}
+.steptab li.second .left{ margin-left:0; border:15px solid #f5f5f5; border-left:15px solid #f5f5f5;}
+.steptab .on{ background:#CDF;font-weight: bold;}
+.steptab .on em{ background:#FF6633;border-left:15px solid #CDF;}
+.steptab .on .left{border-top:15px solid #CDF; border-bottom:15px solid #CDF; border-right:15px solid #CDF;border-left:15px solid #f5f5f5;}
+.steptab li.on a{color:#606060;}
 """
 
 # 搜索 eform 的使用方法

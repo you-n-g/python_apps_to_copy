@@ -46,8 +46,8 @@ class EFormAdmin(admin.ModelAdmin):
     list_editable = ('name','repeat_n', 'instruction', 'fields')
 
 class EFormOrderAdmin(admin.ModelAdmin):
-    list_display = ('pk','eformset', 'weight', 'kind')
-    list_editable = ('eformset', 'weight', 'kind')
+    list_display = ('pk', 'name', 'eformset', 'weight', 'kind')
+    list_editable = ('eformset', 'name', 'weight', 'kind')
     ordering = ['-weight']
 
 class EObjectAdmin(admin.ModelAdmin):

@@ -155,6 +155,19 @@ def get_display_info(eobject, eformset):
     return normal_eforms, special_eforms
 
 
+def _get_valid_redirect_url(request, obj, eobj, eform, eformset, with_action_name=False):
+    # BEGIN 获得下一个EForm, valid_redirect_url 表示表单验证通过后会跳转到哪里去
+    eformitem = EFormItem.objects.get(forms = eform, eformset = eformset)
+    next_eform = eformitem.get_next_eform(eobj)
+    valid_redirect_url = obj.get_edit_eform_url(request, next_eform) if next_eform else obj.get_owner_view_url(request)  
+    # END   获得下一个EForm, valid_redirect_url 表示表单验证通过后会跳转到哪里去
+    if with_action_name:
+        next_action_name = (u'填写%s' %  next_eform.name) if next_eform else u'预览信息'
+        return valid_redirect_url, next_action_name
+    else:
+        return valid_redirect_url
+
+
 def _fill_eform_view(request, obj, eobj, eformset, template, 
         eform_id = None, 
         group = None,
@@ -208,7 +221,7 @@ def _fill_eform_view(request, obj, eobj, eformset, template,
             clear_eobject_cache(eobj)
             messages.info(request, u'保存%s成功' % eform.name)
             if eform.repeat_n == 1 and (eform.get_eform_type() not in ('image', )): # 如果是 只填写一遍的页面 并且  不是 传图页面， 就跳转
-                redirect_url = request.POST.get('valid_redirect_url', redirect_url)
+                redirect_url = _get_valid_redirect_url(request, obj, eobj, eform, eformset) or redirect_url
             elif eform.repeat_n > 1:
                 # 如果是填写多个的页面，就回到编辑整个 eform的页面。
                 redirect_url = getattr(obj, get_edit_eform_url_func)(request, eform)
@@ -221,13 +234,6 @@ def _fill_eform_view(request, obj, eobj, eformset, template,
         messages.info(request, u'成功删除%s！' % eform.name)
         return HttpResponseRedirect(redirect_url), None
     
-    # BEGIN 获得下一个EForm, valid_redirect_url 表示表单验证通过后会跳转到哪里去
-    eformitem = EFormItem.objects.get(forms = eform, eformset = eformset)
-    next_eform = eformitem.get_next_eform(eobj)
-    valid_redirect_url = getattr(obj, get_edit_eform_url_func)(request, next_eform) if next_eform else getattr(obj, get_owner_view_url_func)(request)  
-    next_action_name = (u'填写%s' %  next_eform.name) if next_eform else u'预览信息'
-    # END   获得下一个EForm, valid_redirect_url 表示表单验证通过后会跳转到哪里去
-
     context_dict.update(locals())
     return render(request, template, context_dict), form
 

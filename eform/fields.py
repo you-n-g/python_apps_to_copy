@@ -4,7 +4,7 @@
 from django.forms import CharField, FileField as DjangoFileField, ChoiceField, MultipleChoiceField as DjangoMultipleChoiceField, ModelChoiceField, ImageField as DjangoImageField
 from django.forms import DateField as DjangoDateField, TimeField as  DjangoTimeField,DateTimeField as DjangoDateTimeField
 from django import forms
-from widgets import ImageInput, NiceFileInput,DateWidget,TimeWidget,DateTimeWidget
+from widgets import ImageInput, NiceFileInput,DateWidget,TimeWidget,DateTimeWidget, VideoInput
 #from tagging.widgets import TagAutocompleteTagIt # 因为在本项目里没用到，暂时注释掉
 from tagging.forms import TagField  as OtherTagField
 
@@ -16,7 +16,7 @@ class ImageField(DjangoImageField):
     widget = ImageInput
 
 class VideoField(DjangoFileField):
-	pass
+	widget = VideoInput
 
 class FileField(DjangoFileField):
     widget = NiceFileInput

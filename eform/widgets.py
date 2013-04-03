@@ -79,7 +79,6 @@ class DateWidget(forms.DateInput):
         css = {
             'all' : ["%splugins/datetimeinput/datetime_style.css"%settings.STATIC_URL],
         }
-
     def __init__(self, attrs=None, format=None):
         final_attrs = {}
         if attrs is not None:
@@ -152,3 +151,53 @@ class DateTimeWidget(SplitDateTimeWidget):
 
     def format_output(self, rendered_widgets):
         return mark_safe(u"<p class='datetimewidget'>%s %s</p>"%(rendered_widgets[0],rendered_widgets[1]))
+
+
+
+class VideoInput(ClearableFileInput):
+    template_with_initial = u'<div class="fileinput"><p>%(initial_text)s: %(initial)s </p><p>%(input_text)s: %(input)s</p></div>'
+    initial_template = '''
+<a href="%(url)s"
+     style="display:block;width:470;height:300px; margin-left:auto; margin-right:auto"  
+     id="%(id)s"> 
+</a> 
+<script> 
+    flowplayer("%(id)s", {src: '%(STATIC_URL)scommon/flowplayer/flowplayer-3.2.7.swf', wmode: 'transparent',width:470,height:300}, {
+                clip:{
+                    autoPlay:false,
+                    autoBuffering:true,
+                    start:20,
+                    urlEncoding: true
+                }
+    });
+</script> 
+'''
+    def render(self, name, value, attrs=None):
+        substitutions = {
+            'initial_text': self.initial_text,
+            'input_text': self.input_text,
+            'clear_template': '',
+            'clear_checkbox_label': self.clear_checkbox_label,
+        }
+        template = u'%(input)s'
+        substitutions['input'] = FileInput.render(self, name, value, attrs)
+
+        if value and hasattr(value, "url"):
+            template = self.template_with_initial
+            substitutions['initial'] = (self.initial_template % {
+                "url": escape(value.url),
+                "id": 'project_video%d' % id(self),
+                "STATIC_URL": settings.STATIC_URL,
+            })
+            if not self.is_required:
+                checkbox_name = self.clear_checkbox_name(name)
+                checkbox_id = self.clear_checkbox_id(checkbox_name)
+                substitutions['clear_checkbox_name'] = conditional_escape(checkbox_name)
+                substitutions['clear_checkbox_id'] = conditional_escape(checkbox_id)
+                substitutions['clear'] = CheckboxInput().render(checkbox_name, False, attrs={'id': checkbox_id})
+                substitutions['clear_template'] = self.template_with_clear % substitutions
+
+        return mark_safe(template % substitutions)
+
+    class Media:
+        js = ('%scommon/flowplayer/flowplayer-3.2.6.min.js' % settings.STATIC_URL,)

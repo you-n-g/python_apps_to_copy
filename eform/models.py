@@ -153,9 +153,15 @@ class EFormItem(models.Model):
             return None
 
     def get_next_eform(self, eobject):
-        next_eformitem = self.get_next_eformitem()
-        if next_eformitem != None:
-            return next_eformitem.get_eform(eobject)
+        eformitem = self
+        while True:
+            eformitem = eformitem.get_next_eformitem()
+            if eformitem is None:
+                return None
+            eform = eformitem.get_eform(eobject)
+            if eform is not None:
+                return eform
+
         
 class LogicItem(models.Model):
     """2type: LogicItem(efield=efield,text='test',compare='=');LogicItem(operator='and',logic=logicitem) """
@@ -165,6 +171,7 @@ class LogicItem(models.Model):
         ("!=",'notequal'),
         ('exists',u'填写过这个问题'),
         ('not_exists',u"没填写过这个问题"),
+        ('not', '取反(logic中只要一个False就返回True)'),
     )
     LOGIC_CHOICES = (
         ('and','and'),
@@ -174,7 +181,7 @@ class LogicItem(models.Model):
     text = models.TextField(u"答案",null=True,blank=True)
     compare = models.CharField(choices=LOGINITEM_CHOICES,max_length=20,null=True,blank=True)
     operator = models.CharField(choices=LOGIC_CHOICES,max_length=20,null=True,blank=True)
-    logic = models.ManyToManyField("self",null=True,blank=True)
+    logic = models.ManyToManyField("self",null=True,blank=True, symmetrical=False)
 
     def pass_test(self,value_list):
         if self.operator =="and":
@@ -185,6 +192,11 @@ class LogicItem(models.Model):
         if self.operator =="or":
             for l in self.logic.all():
                 if l.pass_test(value_list=value_list):
+                    return True
+            return False
+        if self.operator == "not":
+            for l in self.logic.all():
+                if not l.pass_test(value_list=value_list):
                     return True
             return False
 
@@ -201,6 +213,10 @@ class LogicItem(models.Model):
     def __unicode__(self):
         if self.compare:
             return "%s %s %s"%(unicode(self.efield),self.compare,self.text)
+        elif self.operator == "not":
+            return u"not(%s)" % u"".join([u"【%s】" % unicode(l) for l in self.logic.all()])
+        elif self.operator:
+            return  self.operator.join([u"【%s】" % unicode(l) for l in self.logic.all()])
         return "%d-%s"%(self.id,self.operator)
 
 
@@ -218,7 +234,7 @@ class EForm(models.Model):
     validation = models.CharField(verbose_name=u'页面级别表单认证,加后台逻辑,存函数名',max_length=100,null=True,blank=True,help_text=u"存在validation的文件里面") 
 
     def __unicode__(self):
-        return self.name
+        return u"(%d)%s[%s]" % (self.pk, self.name, self.key)
 
     def test_logic_item(self, eobject):
         # 测试针对 eobject的数据， 本 logic_item 是否通过
@@ -419,7 +435,7 @@ class EField(models.Model):
         return ""
 
     def __unicode__(self):
-        return self.label
+        return u"(%d)%s[%s]" % (self.pk, self.label, self.key)
 
     class Meta:
         ordering = ('-weight',)
