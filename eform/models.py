@@ -23,19 +23,19 @@ except ImportError:
             return 'CharField'
 
 # BEGIN  我们是 工具函数#{{{
-def get_eobject_key(eobject, suffix = ''):
+def get_eobject_key(eobject, suffix=''):
     return u"eobject_key_%d_%s" % (eobject.pk, suffix)
 
 def get_newest_value4efield(eobject, efield):
     if efield == None: return Value.objects.none()
-    values = Value.objects.filter(efield = efield, eobject = eobject)
+    values = Value.objects.filter(efield=efield, eobject=eobject)
     max_group = values.aggregate(Max('group'))['group__max']
-    return values.filter(group = max_group)
+    return values.filter(group=max_group)
 
 def get_newest_value4key(eobject, key):
-    values = Value.objects.filter(efield__key = key, eobject = eobject)
+    values = Value.objects.filter(efield__key=key, eobject=eobject)
     max_group = values.aggregate(Max('group'))['group__max']
-    return values.filter(group = max_group)
+    return values.filter(group=max_group)
 
 def get_string_from_values(values):
     return u' '.join([unicode(value.get_python_value()) for value in values]) 
@@ -78,10 +78,10 @@ def get_python_values4eobject(eobject, efield):
 
 def clear_eobject_cache(eobject):
     for key in  [
-        get_eobject_key(eobject, suffix = 'efield'),
-        get_eobject_key(eobject, suffix = 'key'),
-        get_eobject_key(eobject, suffix = 'python_values'),
-        get_eobject_key(eobject, suffix = 'eform_dict_list_values'),
+        get_eobject_key(eobject, suffix='efield'),
+        get_eobject_key(eobject, suffix='key'),
+        get_eobject_key(eobject, suffix='python_values'),
+        get_eobject_key(eobject, suffix='eform_dict_list_values'),
     ]:
         cache.delete(key)
     
@@ -91,18 +91,18 @@ from photologue.models import CommonImage #图片用这个
 import validation
 # 咱们是描述表单结构的！！
 class EFormSet(models.Model):
-    name = models.CharField(u"表单名称", max_length = 100)
-    get_name_efield = models.ForeignKey("EField", blank = True, null = True)
+    name = models.CharField(u"表单名称", max_length=100)
+    get_name_efield = models.ForeignKey("EField", blank=True, null=True)
     # 一些类似的字段
-    image_efield = models.ForeignKey("EField", related_name = 'image4eformset', verbose_name = u'图片字段',  blank = True, null = True)
-    category_efield = models.ForeignKey("EField", related_name = 'category4eformset', verbose_name = u'类别字段', blank = True, null = True)
-    discription_efield = models.ForeignKey("EField", related_name = 'discription4eformset', verbose_name = u'描述信息的字段', blank = True, null = True)
+    image_efield = models.ForeignKey("EField", related_name='image4eformset', verbose_name=u'图片字段',  blank=True, null=True)
+    category_efield = models.ForeignKey("EField", related_name='category4eformset', verbose_name=u'类别字段', blank=True, null=True)
+    discription_efield = models.ForeignKey("EField", related_name='discription4eformset', verbose_name=u'描述信息的字段', blank=True, null=True)
 
     def get_first_available_eform(self, eobject):
         '''
             根据eobject 返回的一个合法的eform，
         '''
-        for ei in EFormItem.objects.filter(eformset = self):
+        for ei in EFormItem.objects.filter(eformset=self):
             eform = ei.get_eform(eobject)
             if eform != None:
                 return eform
@@ -117,11 +117,11 @@ class EFormItem(models.Model):
         ('always_show', u"一直显示" ), # 这也意味着 这项是迟早要填的，如果此项不填， 是无法通过 is_complete 判断的
         ('show_on_conditions', u"需要填写才显示" ), # 这意味着 这项是根据需要才填写的， 如果不显示 就不用填写此项。
     )
-    name = models.CharField(verbose_name = u'名称', max_length = 200)
+    name = models.CharField(verbose_name=u'名称', max_length=200)
     eformset = models.ForeignKey(EFormSet)
-    weight = models.IntegerField(verbose_name = u'页面权重，大的在前', default = 1000)
-    kind = models.CharField(verbose_name = u"类型", choices = KIND, max_length = 30, default = 'always_show')
-    forms = models.ManyToManyField('EForm', verbose_name = u"包含的表单", null = True, blank = True)
+    weight = models.IntegerField(verbose_name=u'页面权重，大的在前', default=1000)
+    kind = models.CharField(verbose_name=u"类型", choices=KIND, max_length=30, default='always_show')
+    forms = models.ManyToManyField('EForm', verbose_name=u"包含的表单", null=True, blank=True)
 
     class Meta:
         ordering = ('-weight',)
@@ -148,7 +148,7 @@ class EFormItem(models.Model):
 
     def get_next_eformitem(self):
         try:
-            return self.eformset.eformitem_set.filter(Q(weight__lte = self.weight) & ~Q(pk = self.pk)).order_by('-weight')[0]
+            return self.eformset.eformitem_set.filter(Q(weight__lte=self.weight) & ~Q(pk=self.pk)).order_by('-weight')[0]
         except IndexError:
             return None
 
@@ -221,14 +221,14 @@ class LogicItem(models.Model):
 
 
 class EForm(models.Model):
-    name = models.CharField(verbose_name = u'表单', max_length = 200)
-    key = models.CharField(u'EForm的后台名称',max_length=200, blank=True, help_text = u'为了方便查找，最好唯一！！')
-    repeat_n = models.IntegerField(verbose_name = u"答案可以重复的次数", default = 1)
+    name = models.CharField(verbose_name=u'表单', max_length=200)
+    key = models.CharField(u'EForm的后台名称',max_length=200, blank=True, help_text=u'为了方便查找，最好唯一！！')
+    repeat_n = models.IntegerField(verbose_name=u"答案可以重复的次数", default=1)
     # TODO fileds 直接放在这里其实不好， 应该使用 throught， 然后在那个表里存放是是否能编辑 和排序的功能！！
-    fields = models.ManyToManyField('EField', verbose_name = u"", null = True, blank = True)
-    instruction = models.TextField(u'页面说明', blank = True)
+    fields = models.ManyToManyField('EField', verbose_name=u"", null=True, blank=True)
+    instruction = models.TextField(u'页面说明', blank=True)
     # required 本来想放在validation里的，因为涉及到了判断表单是否完善， 所以这里留了一份
-    required = models.BooleanField(u'是否必填', default = True)
+    required = models.BooleanField(u'是否必填', default=True)
     logicitem = models.ForeignKey(LogicItem,null=True,blank=True)
     #TODO VALIDATION CLEAN 
     validation = models.CharField(verbose_name=u'页面级别表单认证,加后台逻辑,存函数名',max_length=100,null=True,blank=True,help_text=u"存在validation的文件里面") 
@@ -244,14 +244,14 @@ class EForm(models.Model):
         return True
 
     def is_complete(self, eobject):
-        values = Value.objects.filter(eobject = eobject, efield__eform = self)
+        values = Value.objects.filter(eobject=eobject, efield__eform=self)
         # 当还没有填写值的时候会返回None，这事就取0
         max_group = values.aggregate(Max('group'))['group__max'] or 0
         # return 填写过 and  需要填的field的数量 == 需要填写的field中 填写过的field的数量 (这代表都填写完了。)
-        return values.filter(group = max_group).exists() and (self.fields.filter(required = True).count() == self.fields.filter(
-            required = True,
-            value__group = max_group,
-            value__eobject = eobject,
+        return values.filter(group=max_group).exists() and (self.fields.filter(required=True).count() == self.fields.filter(
+            required= True,
+            value__group=max_group,
+            value__eobject=eobject,
         ).distinct().count())
 
     @cache_object_attr
@@ -272,7 +272,7 @@ class ExtraEFormEFiledConfig(models.Model):
     '''
     eform = models.ForeignKey('EForm')
     efield = models.ForeignKey('EField')
-    is_locked = models.BooleanField(u'是否锁住(lock住后， 本字段只能查看，不能编辑)', default = False)
+    is_locked = models.BooleanField(u'是否锁住(lock住后， 本字段只能查看，不能编辑)', default=False)
 
     class Meta:
         unique_together = ("eform", "efield")
@@ -365,6 +365,7 @@ class EField(models.Model):
         u'SimpleModelChoiceField',
         u'MultipleChoiceField',
         u"TagField",
+        u"RadioChoiceField",
     )
 
     # 以存储的方式存储 field
@@ -384,13 +385,13 @@ class EField(models.Model):
     )
 
     # TODO weight 不应该耦合在 EField 里，这个应该写在 eform 里， 这个和 field无关，但是和form 的展现形式有关
-    weight = models.IntegerField(verbose_name = u"问题权重，大的在前", default = 1000)
-    key = models.CharField(verbose_name = u'字段的后台名称', max_length = 100)
-    label = models.CharField(verbose_name = u"名称", max_length = 200)
-    help_text = models.CharField(verbose_name = u"帮助信息", max_length = 200, blank = True)
-    required = models.BooleanField(u'是否必填', default = True)
+    weight = models.IntegerField(verbose_name=u"问题权重，大的在前", default=1000)
+    key = models.CharField(verbose_name=u'字段的后台名称', max_length=100)
+    label = models.CharField(verbose_name=u"名称", max_length=200)
+    help_text = models.CharField(verbose_name=u"帮助信息", max_length=200, blank=True)
+    required = models.BooleanField(u'是否必填', default=True)
     # 掌管信息的类型
-    field_type = models.CharField(verbose_name = u"EField的类型，存储CharField之类的东西", choices = FIELD_TYPE_CHOICES, max_length = 100)
+    field_type = models.CharField(verbose_name=u"EField的类型，存储CharField之类的东西", choices=FIELD_TYPE_CHOICES, max_length=100)
 
     #TODO 专管信息的呈现
     #widget = models.ForeignKey(
@@ -413,7 +414,7 @@ class EField(models.Model):
         validators = self.validator.all()
         return validators
 
-    def get_js_validator(self, initial_value = None):
+    def get_js_validator(self, initial_value=None):
         """for exmaple{validate:{required:true,maxlength:30}} """
         validators = self.get_validators()
         vs = {}
@@ -435,7 +436,7 @@ class EField(models.Model):
         return ""
 
     def __unicode__(self):
-        return u"(%d)%s[%s]" % (self.pk, self.label, self.key)
+        return u"(%d)%s[%s] - %s" % (self.pk, self.label, self.key, self.weight)
 
     class Meta:
         ordering = ('-weight',)
@@ -444,10 +445,10 @@ class Choice(models.Model):
     key = models.CharField(u'选项的后台名称',max_length=200,blank=True)
     efield = models.ForeignKey(EField, related_name='choices')
     value = models.CharField(u'值', max_length=500)
-    weight = models.IntegerField(u'权重', default = 1000)
+    weight = models.IntegerField(u'权重', default=1000)
 
     # 针对 
-    content_type = models.ForeignKey(ContentType,null=True,blank=True, related_name = 'eform_choices')
+    content_type = models.ForeignKey(ContentType,null=True,blank=True, related_name='eform_choices')
     object_id = models.PositiveIntegerField(null=True,blank=True)
     content_object = generic.GenericForeignKey('content_type','object_id')
 
@@ -468,10 +469,10 @@ class EObject(models.Model):
     object_id = models.PositiveIntegerField(u"空疼忒爱帝", blank=True, null=True)
     content_object = generic.GenericForeignKey(ct_field="content_type", fk_field="object_id")
     
-    default_fill_eformset = models.ForeignKey(EFormSet, verbose_name = u"填写方式", related_name = u'objects4fill', blank = True, null = True)
-    default_display_eformset = models.ForeignKey(EFormSet, verbose_name = u"呈现方式", related_name = u'objects4display', blank = True, null = True)
+    default_fill_eformset = models.ForeignKey(EFormSet, verbose_name=u"填写方式", related_name=u'objects4fill', blank=True, null=True)
+    default_display_eformset = models.ForeignKey(EFormSet, verbose_name=u"呈现方式", related_name=u'objects4display', blank=True, null=True)
 
-    create_time = models.DateTimeField(auto_now_add = True)
+    create_time = models.DateTimeField(auto_now_add=True)
 
     tags = TagField(u"标签",null=True,blank=True,help_text=u"标签")
 
@@ -479,7 +480,7 @@ class EObject(models.Model):
     def __unicode__(self):
         return get_string_from_efield4eobject(self, self.default_display_eformset and self.default_display_eformset.get_name_efield) or u"还未填写名称"
 
-    def is_complete(self, eformset = None):
+    def is_complete(self, eformset=None):
         eformset = eformset or self.default_fill_eformset
         for eformitem in eformset.eformitem_set.all():
             eform = eformitem.get_eform(self)
@@ -491,7 +492,7 @@ class EObject(models.Model):
         return True
 
     def get_groups4eform(self, eform):
-        return [v['group'] for v in Value.objects.filter(eobject = self, efield__eform = eform).order_by('group').values('group').distinct()]
+        return [v['group'] for v in Value.objects.filter(eobject=self, efield__eform=eform).order_by('group').values('group').distinct()]
 
     @cache_object_attr
     def get_image_object(self):
@@ -537,7 +538,7 @@ class EObject(models.Model):
                 self.eobject = eobject
             def __getattr__(self, key):
                 try:
-                    eform = EForm.objects.get(key = key)
+                    eform = EForm.objects.get(key=key)
                 except EForm.DoesNotExist:
                     return []
                 return get_eform_value_dict_list(self.eobject, eform)
@@ -546,7 +547,7 @@ class EObject(models.Model):
 
     def update_tags(self):
         """ 用于更新tag """
-        te=EField.objects.filter(field_type="TagField",eform__eformitem__eformset = self.default_fill_eformset)
+        te=EField.objects.filter(field_type="TagField",eform__eformitem__eformset=self.default_fill_eformset)
         if te.count>0:
             vs=Value.objects.filter(eobject=self,efield__in=te)
             for v in vs:
@@ -555,23 +556,23 @@ class EObject(models.Model):
                     self.save()
 
     def is_blank(self):
-        return not Value.objects.filter(eobject = self).exists()
+        return not Value.objects.filter(eobject=self).exists()
     
     def clear_all_values(self):
-        return Value.objects.filter(eobject = self).delete()
+        return Value.objects.filter(eobject=self).delete()
 
 class Value(models.Model):
     eobject = models.ForeignKey(EObject)
     efield = models.ForeignKey(EField)
     value = models.TextField()
-    group = models.IntegerField(verbose_name = u'答案分组，越早回答的分组越小')
-    vfile = models.FileField(upload_to = get_file_path,null=True,blank=True, db_index = True)
+    group = models.IntegerField(verbose_name=u'答案分组，越早回答的分组越小')
+    vfile = models.FileField(upload_to=get_file_path,null=True,blank=True, max_length=300)
 
     content_type = models.ForeignKey(ContentType,null=True,blank=True)
     object_id = models.PositiveIntegerField(null=True,blank=True)
     content_object = generic.GenericForeignKey('content_type','object_id')
 
-    create_time = models.DateTimeField(auto_now_add = True)
+    create_time = models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return self.value
 
@@ -579,9 +580,9 @@ class Value(models.Model):
         '''
             从数据库的文本转换为python值
         '''
-        return self.efield.get_python_value(content_object = self.content_object,
-                                            vfile = self.vfile,
-                                            db_value = self.value)
+        return self.efield.get_python_value(content_object=self.content_object,
+                                            vfile=self.vfile,
+                                            db_value=self.value)
 
 ## END 实现统计功能#{{{
 class EObjFilterCondition(models.Model):
@@ -589,23 +590,23 @@ class EObjFilterCondition(models.Model):
     efield = models.ForeignKey(EField)
     # Value
     value = models.TextField()
-    vfile = models.FileField(upload_to = get_file_path,null=True,blank=True, db_index = True)
+    vfile = models.FileField(upload_to=get_file_path,null=True,blank=True, db_index=True)
     content_type = models.ForeignKey(ContentType,null=True,blank=True)
     object_id = models.PositiveIntegerField(null=True,blank=True)
     content_object = generic.GenericForeignKey('content_type','object_id')
 
     def get_python_value(self):
-        return self.efield.get_python_value(content_object = self.content_object,
-                                            vfile = self.vfile,
-                                            db_value = self.value)
+        return self.efield.get_python_value(content_object=self.content_object,
+                                            vfile=self.vfile,
+                                            db_value=self.value)
     def __unicode__(self):
         return u"%s - %s" % (self.efield, self.get_python_value())
 
 class EObjStatistics(models.Model):
-    name = models.CharField(u"名称", max_length=100, help_text = u'描述这是对什么的统计', blank = True)
-    efilters = models.ManyToManyField(EObjFilterCondition,blank = True, null = True)
+    name = models.CharField(u"名称", max_length=100, help_text=u'描述这是对什么的统计', blank=True)
+    efilters = models.ManyToManyField(EObjFilterCondition,blank=True, null=True)
 
-    def filter_eobjects(self, objs, prefix = 'eobject', extra_query = None):
+    def filter_eobjects(self, objs, prefix='eobject', extra_query=None):
         for eflt in self.efilters.all():
             query = Q(**{'%s__value__efield' %  prefix : eflt.efield})
             if extra_query: query = query & extra_query

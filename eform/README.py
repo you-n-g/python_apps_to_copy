@@ -143,7 +143,7 @@ def view_XXX(request, XXX_id):
                     {% endfor %}
                 </div>
                 <div class="col-1 taC">
-                    <form action="{%url process_flowitem_group flow_id=request.grflow_instance.id flowitem_id=flowitem.id eform_id=eform.id group=gv.0.1.0.group domain_id=request.domain.id%}" method="POST" style="display: inline-block;"  class="submit_confirm">
+                    <form action="{%url process_XXX XXX=XXX.id eform_id=eform.id group=gv.0.1.0.group %}" method="POST" style="display: inline-block;"  class="submit_confirm">
                     {% csrf_token %}                         
                     <button type="submit"  name="delete_group_info">删除</button> 
                 </form>
@@ -156,8 +156,8 @@ def view_XXX(request, XXX_id):
                 <div class="pdC itsthetable">
                     <table>
                         <caption>{{eform.name}}
-                            <a href="{%url process_flowitem_group flow_id=request.grflow_instance.id flowitem_id=flowitem.id eform_id=eform.id group=gv.0.1.0.group domain_id=request.domain.id%}" title="修改">修改</a>
-                            <form action="{%url process_flowitem_group flow_id=request.grflow_instance.id flowitem_id=flowitem.id eform_id=eform.id group=gv.0.1.0.group domain_id=request.domain.id%}" method="POST" style="display: inline-block;"  class="submit_confirm">
+                            <a href="{%url process_XXX XXX=XXX.id eform_id=eform.id group=gv.0.1.0.group %}" title="修改">修改</a>
+                            <form action="{%url process_XXX XXX=XXX.id eform_id=eform.id group=gv.0.1.0.group %}" method="POST" style="display: inline-block;"  class="submit_confirm">
                                 {% csrf_token %}                         
                                 <button type="submit"  name="delete_group_info">删除</button> 
                             </form>

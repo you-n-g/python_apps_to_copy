@@ -234,6 +234,7 @@ def _fill_eform_view(request, obj, eobj, eformset, template,
         messages.info(request, u'成功删除%s！' % eform.name)
         return HttpResponseRedirect(redirect_url), None
     
+    valid_redirect_url = _get_valid_redirect_url(request, obj, eobj, eform, eformset)
     context_dict.update(locals())
     return render(request, template, context_dict), form
 

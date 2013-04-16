@@ -19,19 +19,20 @@ from django.core.validators import EMPTY_VALUES
 def _get_field_key(efield):
     return u"%s_%s" % (efield.pk, efield.key)
 
-def _get_choices4efield(efield):
-    field_class = getattr(fields, efield.field_type)
+    
+def _get_choices4efield(efield, field_type = None):
+    field_type = field_type or efield.field_type
+    field_class = getattr(fields, field_type)
     choices =  [] if  (
-        (efield.field_type in EField.MULT_CHOICES_FIELD) or 
+        (field_type in EField.MULT_CHOICES_FIELD) or  
         getattr(field_class, 'hide_blank_choice', False)
     ) else [((''), ('------'))]
     for choice in efield.choices.select_related().all():
-        if efield.field_type == u'SimpleModelChoiceField':
+        if field_type == u'SimpleModelChoiceField':
             choices.append((u"%d-%d"%(choice.content_type.id,choice.object_id), choice.value))
         else:
             choices.append((choice.value, choice.value))
     return choices
-    
 
 class ProForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -222,6 +223,13 @@ class FilterEObjectForm(forms.Form):
     '''
         我是根据EField来筛选 **指向EObject** 的 instance 的！！！
     '''
+
+    @classmethod
+    def transfer_field_type(cls, field_type):
+        if field_type == u"RadioChoiceField":
+            return u"ChoiceField"
+        return field_type
+
     def __init__(self, *args, **kwargs):
         self._efields = kwargs.pop('efields', None)
         self._eobject_instances = kwargs.pop('eobject_instances', None)
@@ -237,12 +245,12 @@ class FilterEObjectForm(forms.Form):
                 #TODO， 构建efield的时候需要加强, 加入widget等东西
                 if (efield.field_type in EField.MULT_CHOICES_FIELD) and self._treat_multi_as_single:
                     efield.field_type =  "ChoiceField"
-                self.fields[field_key] = getattr(fields, efield.field_type)()
+                self.fields[field_key] = getattr(fields, self.transfer_field_type(efield.field_type))()
                 self.fields[field_key].efield = efield # 记录 efield
                 self.fields[field_key].required = False
                 self.fields[field_key].label = efield.label
                 if efield.choices.exists():
-                    self.fields[field_key].choices = _get_choices4efield(efield)
+                    self.fields[field_key].choices = _get_choices4efield(efield, self.transfer_field_type(efield.field_type))
 
     def get_result(self):
         if self._eobject_instances == None:
