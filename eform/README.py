@@ -61,7 +61,7 @@ class XXX(models.Model):
         '''
             获取编辑 eform 的url
         '''
-        return reverse('process_XXX_eform', kwargs={'XXX_id': self.id, 'eform_id': eform.id})
+        return reverse('process_XXX', kwargs={'XXX_id': self.id, 'eform_id': eform.id})
 
     def get_owner_view_url(self, request):
         '''
@@ -76,7 +76,7 @@ from tools.utils import lock_view_when_post
 from eform.utils import fill_eform_view
 
 
-@lock_view_when_post
+@lock_view_when_post("XXXX")
 def process_XXX(request, XXX_id, **kwargs):
     xxx = get_object_or_404(XXX, pk=XXX_id)
     # TODO permission examine
