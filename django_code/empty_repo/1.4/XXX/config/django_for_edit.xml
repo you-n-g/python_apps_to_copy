@@ -11,6 +11,7 @@
     <pidfile>/var/run/uwsgi.pids/XXX.pid</pidfile>
     <daemonize>/var/log/uwsgi/django_apps/XXX.log</daemonize>
     <max-requests>100</max-requests>
-    <limit-as>1000</limit-as>
+    <limit-as>1000__XXX这个参数只有restart之后才有效，reload只能让它变小不能让它变大...XXX</limit-as>
     <buffer-size>40960</buffer-size>
+    <memory-report />
 </uwsgi>
