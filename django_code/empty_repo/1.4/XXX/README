@@ -5,6 +5,7 @@
 NEWNAME=NEWNAME
 mv XXX $NEWNAME
 mv $NEWNAME/XXX/ $NEWNAME/$NEWNAME
+mv $NEWNAME/$NEWNAME/XXX/ $NEWNAME/$NEWNAME/$NEWNAME/
 find $NEWNAME -type f -exec sed -i s/XXX/$NEWNAME/g  {} \;
 #TODO 然后删除 .gitignore .hgignore 之一
 # git add -f .
@@ -16,8 +17,11 @@ find $NEWNAME -type f -exec sed -i s/XXX/$NEWNAME/g  {} \;
 
 
 #BEGIN 使用VIRTUAL_ENV一般需要安装的东西
+sudo apt-get install python-dev mysql-server
+
 # 一般先更新 distribute 可能比较好 easy_install -U distribute
-pip install MySQL-python django PIL South python-memcached
+pip install PIL --allow-external PIL --allow-unverified PIL
+pip install MySQL-python django==1.4.13 South python-memcached
 # 其他常用的 django-mptt
 # pip freeze > requirements.txt
 # pip install -r requirements.txt
