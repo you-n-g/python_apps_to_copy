@@ -20,7 +20,13 @@ find $NEWNAME -type f -exec sed -i s/XXX/$NEWNAME/g  {} \;
 sudo apt-get install python-dev mysql-server
 
 # 一般先更新 distribute 可能比较好 easy_install -U distribute
-pip install PIL --allow-external PIL --allow-unverified PIL
+
+# pip install PIL --allow-external PIL --allow-unverified PIL # 我安装PIL出了奇怪的问题， 于是按以下方法安装了 Pillow
+# 参考http://pillow.readthedocs.org/en/latest/installation.html
+pip install Pillow
+sudo apt-get install libtiff4-dev libjpeg8-dev zlib1g-dev libopenjpeg-dev\
+    libfreetype6-dev liblcms2-dev libwebp-dev tcl8.5-dev tk8.5-dev python-tk
+
 pip install MySQL-python django==1.4.13 South python-memcached
 # 其他常用的 django-mptt
 # pip freeze > requirements.txt
