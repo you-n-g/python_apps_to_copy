@@ -18,8 +18,8 @@ function import_db() {
 
 if [ $# -eq 1 ]; then
     if [ -e $1 ]; then 
-        import_db $WWW_DB $1 #其他表在后
-        echo "$WWW_DB 导入成功"
+        import_db $DB $1 #其他表在后
+        echo "$DB 导入成功"
     else
         echo "The file doesn't exsist"
     fi  
